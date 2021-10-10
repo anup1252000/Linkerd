@@ -1,0 +1,38 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weatherforecastapp
+spec:
+  selector:
+    matchLabels:
+      app: weatherforecastapp
+  template:
+    metadata:
+      labels:
+        app: weatherforecastapp
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+      - name: weatherforecastapp
+        image: linkerdverifyregistry.azurecr.io/linkerdverify:v1
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weatherforecastservice
+spec:
+  type: LoadBalancer
+  selector:
+    app: weatherforecastapp
+  ports:
+  - port: 80
+    targetPort: 80
+
